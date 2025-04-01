@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+  <head>
+    <title>PA4 🙂</title>
+    <meta charset="utf-8" />
+    <meta name="author" content="Data Science for Linguists" />
+    <script src="libs/header-attrs-2.29/header-attrs.js"></script>
+    <link href="libs/remark-css-0.0.1/default.css" rel="stylesheet" />
+    <link href="libs/remark-css-0.0.1/default-fonts.css" rel="stylesheet" />
+  </head>
+  <body>
+    <textarea id="source">
+class: center, middle, inverse, title-slide
+
+.title[
+# PA4 🙂
+]
+.subtitle[
+## Eva Corregidor
+]
+.author[
+### Data Science for Linguists
+]
+.institute[
+### Spring 2025
+]
+.date[
+### 2025/03/31 (updated: 2025-03-31)
+]
+
+---
+
+
+# First Steps
+1 - Create a new project in RStudio called pa4. Inside your new project, create three folders: data_raw, data_tidy, and slides.
+
+2 - Download the dataset available and store it in data_raw.
+
+3 - Generate an HTML presentation using xaringan. Save the RMarkdown file as index.Rmd inside of the folder slides.
+---
+# Step 4
+Load the dataset from inside your index.Rmd file.
+
+``` r
+pa4_data &lt;- read.csv(here("data_raw", "fricatives", "fricatives.csv"))
+```
+---
+# Step 5
+Tidy the data and save the tidy version as a .csv file in data_tidy.
+
+``` r
+pa4_tidy &lt;- pa4_data |&gt;
+  pivot_longer(cols = -obs, names_to = "measure", values_to = "value") |&gt; 
+  separate(measure,into = c("phoneme", "measurement"), sep = "_")|&gt;
+  pivot_wider(names_from = measurement, values_from = value)
+
+write.csv(pa4_tidy, "tidy_data.csv", row.names = FALSE)
+```
+
+---
+# Step 6
+Provide a table of descriptive statistics.
+
+|phoneme |      avg|       sd|
+|:-------|--------:|--------:|
+|s       | 5600.448| 831.3939|
+|sh      | 4093.861| 775.0623|
+---
+# Step 7: Boxplot
+Make a boxplot of center of gravity as a function of phoneme. Use a statistical transformation (i.e., not a boxplot, but rather stat_summary()).
+&lt;img src="index_files/figure-html/unnamed-chunk-5-1.png" width="100%" /&gt;
+---
+# Step 7: Skewness
+In another slide, plot skewness as a function of phoneme. Use a statistical transformation (i.e., not a boxplot, but rather stat_summary()).
+&lt;img src="index_files/figure-html/unnamed-chunk-6-1.png" width="100%" /&gt;
+---
+# Step 8
+Fit a model that examines center of gravity as a function of skewness for the [s] segments (hint: you will have to transform the data). Make a table of the model summary.
+
+First, I transform the data.
+
+``` r
+pa4_transformed &lt;- pa4_data |&gt;
+  pivot_longer(cols = -obs, names_to = "measure", values_to = "value") |&gt;
+  separate(measure,into = c("phoneme", "measurement"), sep = "_") |&gt;
+  filter(phoneme == "s")|&gt;
+  pivot_wider(names_from = measurement, values_from = value)
+```
+---
+# Step 8: Cont.
+Second, I fit the model and make a table of it's summary.
+
+|            |  Estimate| Std. Error|   t value| Pr(&gt;&amp;#124;t&amp;#124;)|
+|:-----------|---------:|----------:|---------:|------------------:|
+|(Intercept) | -756.6888|   532.1200| -1.422027|          0.1614843|
+|skewness    | 1675.5933|   139.3803| 12.021737|          0.0000000|
+---
+# Step 9
+Make a scatter plot that illustrates the relationship in (8).
+&lt;img src="index_files/figure-html/unnamed-chunk-9-1.png" width="100%" /&gt;
+---
+# Step 10
+Check model diagnostics (make plots).
+&lt;img src="index_files/figure-html/unnamed-chunk-10-1.png" width="100%" /&gt;
+---
+# Step 11
+Write up the results (as if it were for a journal article).
+
+For this PA4, I fitted a linear model to explain the relationship between the center of gravity (cog) and skewness of the [s] segments in our data. The model revealed a main effect of skewness (F(1, 48) = 144.5, p&lt;0.001) and provided the best fit of the data (R-squared = 0.75). The visual inspection of Q-Q plots and plots of residuals (see slides #10 and #11) revealed no discernable deviations from normality and homoskedasticity. Overall, the center of gravity increased as a function of skewness.
+---
+# Step 12
+In a new slide, load the assumptions.csv dataset. 
+
+``` r
+pa4_assumptions &lt;- read.csv(here("data_raw", "fricatives", "assumptions.csv"))
+```
+---
+# Step 12: Cont.
+Make a scatterplot.
+![](index_files/figure-html/unnamed-chunk-12-1.png)&lt;!-- --&gt;
+---
+# Step 12: Cont.
+Explain in a few sentences why it would not be appropriate to fit a model to this data.
+
+Linearity is not met. Deviations with such a strength visually indicate that a linear model is not a great fit for this data set. It would be really hard to interpret the relationship of x and y.
+---
+# Last Steps
+13 - Host your project in a GitHub repo called pa4.
+
+14 - Turn the slides into a website using GitHub pages.
+
+15 - Inside your dropbox in programming_assignments, create a folder called pa4 that includes a README.md file with a link to your slides.
+
+16 - Push changes to your forked version of programming_assignments and submit a pull request to the master programming_assignments repo in ds4ling.
+    </textarea>
+<style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
+<script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
+<script>var slideshow = remark.create({
+"highlightStyle": "github",
+"highlightLines": true,
+"countIncrementalSlides": false
+});
+if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
+  window.dispatchEvent(new Event('resize'));
+});
+(function(d) {
+  var s = d.createElement("style"), r = d.querySelector(".remark-slide-scaler");
+  if (!r) return;
+  s.type = "text/css"; s.innerHTML = "@page {size: " + r.style.width + " " + r.style.height +"; }";
+  d.head.appendChild(s);
+})(document);
+
+(function(d) {
+  var el = d.getElementsByClassName("remark-slides-area");
+  if (!el) return;
+  var slide, slides = slideshow.getSlides(), els = el[0].children;
+  for (var i = 1; i < slides.length; i++) {
+    slide = slides[i];
+    if (slide.properties.continued === "true" || slide.properties.count === "false") {
+      els[i - 1].className += ' has-continuation';
+    }
+  }
+  var s = d.createElement("style");
+  s.type = "text/css"; s.innerHTML = "@media print { .has-continuation { display: none; } }";
+  d.head.appendChild(s);
+})(document);
+// delete the temporary CSS (for displaying all slides initially) when the user
+// starts to view slides
+(function() {
+  var deleted = false;
+  slideshow.on('beforeShowSlide', function(slide) {
+    if (deleted) return;
+    var sheets = document.styleSheets, node;
+    for (var i = 0; i < sheets.length; i++) {
+      node = sheets[i].ownerNode;
+      if (node.dataset["target"] !== "print-only") continue;
+      node.parentNode.removeChild(node);
+    }
+    deleted = true;
+  });
+})();
+// add `data-at-shortcutkeys` attribute to <body> to resolve conflicts with JAWS
+// screen reader (see PR #262)
+(function(d) {
+  let res = {};
+  d.querySelectorAll('.remark-help-content table tr').forEach(tr => {
+    const t = tr.querySelector('td:nth-child(2)').innerText;
+    tr.querySelectorAll('td:first-child .key').forEach(key => {
+      const k = key.innerText;
+      if (/^[a-z]$/.test(k)) res[k] = t;  // must be a single letter (key)
+    });
+  });
+  d.body.setAttribute('data-at-shortcutkeys', JSON.stringify(res));
+})(document);
+(function() {
+  "use strict"
+  // Replace <script> tags in slides area to make them executable
+  var scripts = document.querySelectorAll(
+    '.remark-slides-area .remark-slide-container script'
+  );
+  if (!scripts.length) return;
+  for (var i = 0; i < scripts.length; i++) {
+    var s = document.createElement('script');
+    var code = document.createTextNode(scripts[i].textContent);
+    s.appendChild(code);
+    var scriptAttrs = scripts[i].attributes;
+    for (var j = 0; j < scriptAttrs.length; j++) {
+      s.setAttribute(scriptAttrs[j].name, scriptAttrs[j].value);
+    }
+    scripts[i].parentElement.replaceChild(s, scripts[i]);
+  }
+})();
+(function() {
+  var links = document.getElementsByTagName('a');
+  for (var i = 0; i < links.length; i++) {
+    if (/^(https?:)?\/\//.test(links[i].getAttribute('href'))) {
+      links[i].target = '_blank';
+    }
+  }
+})();
+// adds .remark-code-has-line-highlighted class to <pre> parent elements
+// of code chunks containing highlighted lines with class .remark-code-line-highlighted
+(function(d) {
+  const hlines = d.querySelectorAll('.remark-code-line-highlighted');
+  const preParents = [];
+  const findPreParent = function(line, p = 0) {
+    if (p > 1) return null; // traverse up no further than grandparent
+    const el = line.parentElement;
+    return el.tagName === "PRE" ? el : findPreParent(el, ++p);
+  };
+
+  for (let line of hlines) {
+    let pre = findPreParent(line);
+    if (pre && !preParents.includes(pre)) preParents.push(pre);
+  }
+  preParents.forEach(p => p.classList.add("remark-code-has-line-highlighted"));
+})(document);</script>
+
+<script>
+slideshow._releaseMath = function(el) {
+  var i, text, code, codes = el.getElementsByTagName('code');
+  for (i = 0; i < codes.length;) {
+    code = codes[i];
+    if (code.parentNode.tagName !== 'PRE' && code.childElementCount === 0) {
+      text = code.textContent;
+      if (/^\\\((.|\s)+\\\)$/.test(text) || /^\\\[(.|\s)+\\\]$/.test(text) ||
+          /^\$\$(.|\s)+\$\$$/.test(text) ||
+          /^\\begin\{([^}]+)\}(.|\s)+\\end\{[^}]+\}$/.test(text)) {
+        code.outerHTML = code.innerHTML;  // remove <code></code>
+        continue;
+      }
+    }
+    i++;
+  }
+};
+slideshow._releaseMath(document);
+</script>
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+(function () {
+  var script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src  = 'https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML';
+  if (location.protocol !== 'file:' && /^https?:/.test(script.src))
+    script.src  = script.src.replace(/^https?:/, '');
+  document.getElementsByTagName('head')[0].appendChild(script);
+})();
+</script>
+  </body>
+</html>
